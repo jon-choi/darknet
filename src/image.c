@@ -226,6 +226,23 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
     }
 }
 
+int count_detections(image im, int num, float thresh, float **probs, char **names, int classes, char *search_name)
+{
+    int search_count = 0;
+
+    int i;
+    for(i = 0; i < num; ++i){
+        int class = max_index(probs[i], classes);
+        float prob = probs[i][class];
+        if(prob > thresh){
+            if (strcmp(names[class], search_name) == 0) {
+                search_count++;
+            };
+        }
+    }
+    return search_count;
+}
+
 void transpose_image(image im)
 {
     assert(im.w == im.h);
