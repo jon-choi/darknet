@@ -541,7 +541,7 @@ void count_detector(char *datacfg, char *cfgfile, char *weightfile, char *filena
         if (l.softmax_tree && nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         else if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         count = count_detections(im, l.w*l.h*l.n, thresh, probs, names, l.classes, search_name);
-        printf("There are %d %s(s)", count, search_name); // Do something this this!
+        printf("There are %d %s(s)\n", count, search_name); // Do something this this!
 
         free_image(im);
         free_image(sized);
