@@ -7,5 +7,6 @@ For more information see the [Darknet project website](http://pjreddie.com/darkn
 
 For questions or issues please use the [Google Group](https://groups.google.com/forum/#!forum/darknet).
 
-#Darknet#
-Hai, Will!
+#Commands#
+Run vanilla detector: ./darknet detect cfg/yolo.cfg yolo.weights [FILE]
+Run JChoi counter: ./darknet counter cfg/yolo.cfg yolo.weights [FILE] [CLASS]
