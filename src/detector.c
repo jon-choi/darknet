@@ -454,6 +454,7 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
     clock_t time;
     char buff[256];
     char *input = buff;
+    int counter = 0;
     int j;
     float nms=.4;
     while(1){
@@ -482,8 +483,17 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         if (l.softmax_tree && nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         else if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes);
-        save_image(im, "predictions");
-        show_image(im, "predictions");
+        char *prefix = "predictions_";
+        char *suffix[5];
+        char *new_name = malloc(strlen(prefix)+strlen(suffix)+1); //+1 for the zero-terminator
+        sprintf(suffix, "%d", counter);
+        strcpy(new_name, prefix);
+        strcat(new_name, suffix);
+        printf("Saving image: %s", new_name);
+        save_image(im, new_name);
+        counter++;
+        // Skip showing
+        // show_image(im, "predictions");
 
         free_image(im);
         free_image(sized);
