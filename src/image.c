@@ -184,8 +184,8 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
     for(i = 0; i < num; ++i){
         int class = max_index(probs[i], classes);
         float prob = probs[i][class];
-        if(prob > thresh){
-
+	/* Only draw boxes around 'persons' with sufficient prob */
+        if((strcmp(names[class],"person")==0) && (prob > thresh)){
             int width = im.h * .012;
 
             if(0){
@@ -218,6 +218,7 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
             if(bot > im.h-1) bot = im.h-1;
 
             draw_box_width(im, left, top, right, bot, width, red, green, blue);
+	    /* Add appropriate class labels to drawn boxes */
             if (alphabet) {
                 image label = get_label(alphabet, names[class], (im.h*.03)/10);
                 draw_label(im, top + width, left, label, rgb);

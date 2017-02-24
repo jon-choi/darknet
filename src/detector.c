@@ -483,17 +483,18 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         if (l.softmax_tree && nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         else if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes);
-        char *prefix = "predictions_";
+        /* char *prefix = "predictions_"; */
         // sunflower_1-13-26-43-000095.jpg is 31 characters.
         // filename includes the entire path, get only the name
-        int filename_len = strlen(filename);
-        const char *filename_only = &filename[filename_len-31];
-        char *new_name = malloc(strlen(prefix)+strlen(filename_only)+1); //+1 for the zero-terminator
-        strcpy(new_name, prefix);
-        strcat(new_name, filename_only);
-        printf("Saving image: %s\n", new_name);
-        save_image(im, new_name);
-        counter++;
+        /* int filename_len = strlen(filename); */
+        /* const char *filename_only = &filename[filename_len-31]; */
+        /* char *new_name = malloc(strlen(prefix)+strlen(filename_only)+1); //+1 for the zero-terminator */
+        /* strcpy(new_name, prefix); */
+        /* strcat(new_name, filename_only); */
+        /* printf("Saving image: %s\n", new_name); */
+        /* save_image(im, new_name); */
+        save_image(im, "prediction");
+        // counter++;
         // Skip showing
         // show_image(im, "predictions");
 
