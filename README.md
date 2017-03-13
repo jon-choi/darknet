@@ -10,3 +10,5 @@ For questions or issues please use the [Google Group](https://groups.google.com/
 #Commands#
 Run vanilla detector: ./darknet detect cfg/yolo.cfg yolo.weights [FILE]
 Run JChoi counter: ./darknet counter cfg/yolo.cfg yolo.weights [FILE] [CLASS]
+Run video: ./darknet detector demo cfg/coco.data cfg/yolo.cfg yolo.weights [video path] -prefix [prefix string]
+Stitch output: ffmpeg -f image2 -r 25 -start_number 1 -i [pred__%08d.jpg] -s 720x480 [filename for output]
