@@ -485,7 +485,7 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         else if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes);
         // TODO: Remove hard-coded "person" search_name param.
-        count = count_detections(im, l.w*l.h*l.n, thresh, probs, names, l.classes, "person");
+	/*  count = count_detections(im, l.w*l.h*l.n, thresh, probs, names, l.classes, "person"); */
 
         // Mark for easy retrieval from darknet folder
         char *prefix = "pred_";
@@ -509,13 +509,13 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
 
         // Get count as string
         char countstr[15];
-        sprintf(countstr, "_%d", count);
+        /* sprintf(countstr, "_%d", count); */
 
         // Make new name
         char *new_name = malloc(strlen(prefix)+strlen(filename_noext)+strlen(countstr)+1); //+1 for the zero-terminator
         strcpy(new_name, prefix);
         strcat(new_name, filename_noext);
-        strcat(new_name, countstr);
+        /* strcat(new_name, countstr); */
 
         // Save image
         printf("Saving image: %s\n", new_name);
