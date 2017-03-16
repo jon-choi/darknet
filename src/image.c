@@ -185,7 +185,8 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
         int class = max_index(probs[i], classes);
         float prob = probs[i][class];
 	/* Only draw boxes around 'persons' with sufficient prob */
-        if((strcmp(names[class],"person")==0) && (prob > thresh)){
+        /* if((strcmp(names[class],"person")==0) && (prob > thresh)){ */
+        if(prob > thresh){
             int width = im.h * .012;
 
             if(0){
