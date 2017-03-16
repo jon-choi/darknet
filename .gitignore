@@ -4,6 +4,10 @@
 *.out
 *.png
 *.jpg
+*.weights
+*.23
+tags
+backup/
 old/
 mnist/
 data/
