@@ -185,7 +185,7 @@ void draw_and_write_detections(image im, int num, float thresh, box *boxes, floa
         int class = max_index(probs[i], classes);
         float prob = probs[i][class];
 	/* Only draw boxes around 'persons' with sufficient prob */
-        /* if((strcmp(names[class],"person")==0) && (prob > thresh)){ */
+        /* if((strcmp(names[class],screen_class)==0) && (prob > thresh)){ */
         if(prob > thresh){
             int width = im.h * .012;
 
@@ -225,6 +225,114 @@ void draw_and_write_detections(image im, int num, float thresh, box *boxes, floa
                 image label = get_label(alphabet, names[class], (im.h*.03)/10);
                 draw_label(im, top + width, left, label, rgb);
 	    }
+        }
+    }
+}
+
+void draw_and_write_detections_screened(image im, int num, float thresh, box *boxes, float **probs, char **names, image **alphabet, int classes, char *screen_class, FILE *fp)
+{
+    int i;
+
+    for(i = 0; i < num; ++i){
+        int class = max_index(probs[i], classes);
+        float prob = probs[i][class];
+	/* Only draw boxes around 'persons' with sufficient prob */
+        if((strcmp(names[class],screen_class)==0) && (prob > thresh)){
+        /* if(prob > thresh){ */
+            int width = im.h * .012;
+
+            if(0){
+                width = pow(prob, 1./2.)*10+1;
+                alphabet = 0;
+            }
+
+            printf("%s: %.0f%%\n", names[class], prob*100);
+            int offset = class*123457 % classes;
+            float red = get_color(2,offset,classes);
+            float green = get_color(1,offset,classes);
+            float blue = get_color(0,offset,classes);
+            float rgb[3];
+
+            //width = prob*20+2;
+
+            rgb[0] = red;
+            rgb[1] = green;
+            rgb[2] = blue;
+            box b = boxes[i];
+
+	    fprintf(fp, "%d %f %f %f %f\n", class, b.x, b.y, b.w, b.h);
+            int left  = (b.x-b.w/2.)*im.w;
+            int right = (b.x+b.w/2.)*im.w;
+            int top   = (b.y-b.h/2.)*im.h;
+            int bot   = (b.y+b.h/2.)*im.h;
+
+            if(left < 0) left = 0;
+            if(right > im.w-1) right = im.w-1;
+            if(top < 0) top = 0;
+            if(bot > im.h-1) bot = im.h-1;
+
+            draw_box_width(im, left, top, right, bot, width, red, green, blue);
+	    /* Add appropriate class labels to drawn boxes */
+            if (alphabet) {
+                image label = get_label(alphabet, names[class], (im.h*.03)/10);
+                draw_label(im, top + width, left, label, rgb);
+	    }
+        }
+    }
+}
+
+void draw_detections_screened(image im, int num, float thresh, box *boxes, float **probs, char **names, image **alphabet, int classes, char *screen_class)
+{
+    int i;
+
+    for(i = 0; i < num; ++i){
+        int class = max_index(probs[i], classes);
+	if(screen_class){
+		if(strcmp(names[class],screen_class)!=0){
+			continue;
+		}
+	}
+        float prob = probs[i][class];
+	/* Only draw boxes around 'persons' with sufficient prob */
+        /* if((strcmp(names[class],"person")==0) && (prob > thresh)){ */
+        if(prob > thresh){
+            int width = im.h * .012;
+
+            if(0){
+                width = pow(prob, 1./2.)*10+1;
+                alphabet = 0;
+            }
+
+            printf("%s: %.0f%%\n", names[class], prob*100);
+            int offset = class*123457 % classes;
+            float red = get_color(2,offset,classes);
+            float green = get_color(1,offset,classes);
+            float blue = get_color(0,offset,classes);
+            float rgb[3];
+
+            //width = prob*20+2;
+
+            rgb[0] = red;
+            rgb[1] = green;
+            rgb[2] = blue;
+            box b = boxes[i];
+
+            int left  = (b.x-b.w/2.)*im.w;
+            int right = (b.x+b.w/2.)*im.w;
+            int top   = (b.y-b.h/2.)*im.h;
+            int bot   = (b.y+b.h/2.)*im.h;
+
+            if(left < 0) left = 0;
+            if(right > im.w-1) right = im.w-1;
+            if(top < 0) top = 0;
+            if(bot > im.h-1) bot = im.h-1;
+
+            draw_box_width(im, left, top, right, bot, width, red, green, blue);
+	    /* Add appropriate class labels to drawn boxes */
+            if (alphabet) {
+                image label = get_label(alphabet, names[class], (im.h*.03)/10);
+                draw_label(im, top + width, left, label, rgb);
+            }
         }
     }
 }

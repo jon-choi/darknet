@@ -438,7 +438,7 @@ void validate_detector_recall(char *cfgfile, char *weightfile)
     }
 }
 
-void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh)
+void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, char *screen_class, float hier_thresh)
 {
     list *options = read_data_cfg(datacfg);
     char *name_list = option_find_str(options, "names", "data/names.list");
@@ -492,8 +492,12 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         get_region_boxes(l, 1, 1, thresh, probs, boxes, 0, 0, hier_thresh);
         if (l.softmax_tree && nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         else if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
-	if(filename){
+	if(filename && screen_class){
+		draw_and_write_detections_screened(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes, screen_class, output_file);
+	} else if(filename && !screen_class) {
 		draw_and_write_detections(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes, output_file);
+	} else if(screen_class){
+		draw_detections_screened(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, screen_class, l.classes);
 	} else {
 		draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes);
 	}
@@ -612,6 +616,7 @@ void count_detector(char *datacfg, char *cfgfile, char *weightfile, char *filena
 void run_detector(int argc, char **argv)
 {
     char *prefix = find_char_arg(argc, argv, "-prefix", 0);
+    char *screen_class = find_char_arg(argc, argv, "-class", 0);
     float thresh = find_float_arg(argc, argv, "-thresh", .24);
     float hier_thresh = find_float_arg(argc, argv, "-hier", .5);
     int cam_index = find_int_arg(argc, argv, "-c", 0);
@@ -650,7 +655,7 @@ void run_detector(int argc, char **argv)
     char *cfg = argv[4];
     char *weights = (argc > 5) ? argv[5] : 0;
     char *filename = (argc > 6) ? argv[6]: 0;
-    if(0==strcmp(argv[2], "test")) test_detector(datacfg, cfg, weights, filename, thresh, hier_thresh);
+    if(0==strcmp(argv[2], "test")) test_detector(datacfg, cfg, weights, filename, thresh, screen_class, hier_thresh);
     else if(0==strcmp(argv[2], "train")) train_detector(datacfg, cfg, weights, gpus, ngpus, clear);
     else if(0==strcmp(argv[2], "valid")) validate_detector(datacfg, cfg, weights, outfile);
     else if(0==strcmp(argv[2], "recall")) validate_detector_recall(cfg, weights);
@@ -659,6 +664,6 @@ void run_detector(int argc, char **argv)
         int classes = option_find_int(options, "classes", 20);
         char *name_list = option_find_str(options, "names", "data/names.list");
         char **names = get_labels(name_list);
-        demo(cfg, weights, thresh, cam_index, filename, names, classes, frame_skip, prefix, hier_thresh);
+        demo(cfg, weights, thresh, cam_index, filename, names, classes, frame_skip, prefix, screen_class, hier_thresh);
     }
 }
