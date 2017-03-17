@@ -262,7 +262,7 @@ void draw_and_write_detections_screened(image im, int num, float thresh, box *bo
             box b = boxes[i];
 
 	    if(fp!=NULL){
-		    fprintf(fp, "%d %f %f %f %f\n", class, b.x, b.y, b.w, b.h);
+		fprintf(fp, "%d %f %f %f %f\n", class, b.x, b.y, b.w, b.h);
 	    }
             int left  = (b.x-b.w/2.)*im.w;
             int right = (b.x+b.w/2.)*im.w;

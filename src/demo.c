@@ -147,15 +147,11 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
     det = in;
     det_s = in_s;
 
-    char fn_buff[256];
-    sprintf(fn_buff, "%s_%08d.txt", prefix, 1);
-    demo_fp = fopen(fn_buff, "w");
     fetch_in_thread(0);
     detect_in_thread(0);
     disp = det;
     det = in;
     det_s = in_s;
-    fclose(demo_fp);
 
     for(j = 0; j < FRAMES/2; ++j){
         fetch_in_thread(0);
@@ -176,7 +172,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
 
     while(1){
         ++count;
-	/* char fn_buff[256]; */
+	char fn_buff[256];
 	sprintf(fn_buff, "%s_%08d.txt", prefix, count+1);
 	demo_fp = fopen(fn_buff, "w");
         if(1){
