@@ -199,7 +199,7 @@ void draw_and_write_detections(image im, int num, float thresh, box *boxes, floa
             float red = get_color(2,offset,classes);
             float green = get_color(1,offset,classes);
             float blue = get_color(0,offset,classes);
-            float rgb[3];
+            float rgb[3]; 
 
             //width = prob*20+2;
 
@@ -208,7 +208,9 @@ void draw_and_write_detections(image im, int num, float thresh, box *boxes, floa
             rgb[2] = blue;
             box b = boxes[i];
 
-	    fprintf(fp, "%d %f %f %f %f\n", class, b.x, b.y, b.w, b.h);
+	    if(fp!=NULL){
+		    fprintf(fp, "%d %f %f %f %f\n", class, b.x, b.y, b.w, b.h);
+	    }
             int left  = (b.x-b.w/2.)*im.w;
             int right = (b.x+b.w/2.)*im.w;
             int top   = (b.y-b.h/2.)*im.h;
@@ -236,7 +238,6 @@ void draw_and_write_detections_screened(image im, int num, float thresh, box *bo
     for(i = 0; i < num; ++i){
         int class = max_index(probs[i], classes);
         float prob = probs[i][class];
-	/* Only draw boxes around 'persons' with sufficient prob */
         if((strcmp(names[class],screen_class)==0) && (prob > thresh)){
         /* if(prob > thresh){ */
             int width = im.h * .012;
@@ -260,7 +261,9 @@ void draw_and_write_detections_screened(image im, int num, float thresh, box *bo
             rgb[2] = blue;
             box b = boxes[i];
 
-	    fprintf(fp, "%d %f %f %f %f\n", class, b.x, b.y, b.w, b.h);
+	    if(fp!=NULL){
+		    fprintf(fp, "%d %f %f %f %f\n", class, b.x, b.y, b.w, b.h);
+	    }
             int left  = (b.x-b.w/2.)*im.w;
             int right = (b.x+b.w/2.)*im.w;
             int top   = (b.y-b.h/2.)*im.h;
