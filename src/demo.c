@@ -32,6 +32,7 @@ static CvCapture * cap;
 static float fps = 0;
 static float demo_thresh = 0;
 static float demo_hier_thresh = .5;
+static char *demo_screen_class;
 
 static float *predictions[FRAMES];
 static int demo_index = 0;
@@ -48,7 +49,7 @@ void *fetch_in_thread(void *ptr)
     return 0;
 }
 
-void *detect_in_thread(char *screen_class)
+void *detect_in_thread(void *ptr)
 {
     float nms = .4;
 
@@ -78,12 +79,12 @@ void *detect_in_thread(char *screen_class)
     det = images[(demo_index + FRAMES/2 + 1)%FRAMES];
     demo_index = (demo_index + 1)%FRAMES;
 
-    if(!screen_class){
-	    printf("Going into regular draw detections:\n");
+    if(!demo_screen_class){
+	    /* draw_and_write_detections(det, l.w*l.h*l.n, demo_thresh, boxes, probs, demo_names, demo_alphabet, demo_classes); */
 	    draw_detections(det, l.w*l.h*l.n, demo_thresh, boxes, probs, demo_names, demo_alphabet, demo_classes);
     } else {
-	    printf("Going into draw detections screened:\n");
-	    draw_detections_screened(det, l.w*l.h*l.n, demo_thresh, boxes, probs, demo_names, demo_alphabet, demo_classes, screen_class);
+	    /* draw_and_write_detections_screened(det, l.w*l.h*l.n, demo_thresh, boxes, probs, demo_names, demo_alphabet, demo_classes, screen_class); */
+	    draw_detections_screened(det, l.w*l.h*l.n, demo_thresh, boxes, probs, demo_names, demo_alphabet, demo_classes, demo_screen_class);
     }
 
     return 0;
@@ -108,6 +109,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
     demo_classes = classes;
     demo_thresh = thresh;
     demo_hier_thresh = hier_thresh;
+    demo_screen_class = screen_class;
     printf("Demo\n");
     net = parse_network_cfg(cfgfile);
     if(weightfile){
@@ -145,14 +147,14 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
     det_s = in_s;
 
     fetch_in_thread(0);
-    detect_in_thread(screen_class);
+    detect_in_thread(0);
     disp = det;
     det = in;
     det_s = in_s;
 
     for(j = 0; j < FRAMES/2; ++j){
         fetch_in_thread(0);
-        detect_in_thread(screen_class);
+        detect_in_thread(0);
         disp = det;
         det = in;
         det_s = in_s;
@@ -171,7 +173,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
         ++count;
         if(1){
             if(pthread_create(&fetch_thread, 0, fetch_in_thread, 0)) error("Thread creation failed");
-            if(pthread_create(&detect_thread, 0, detect_in_thread, screen_class)) error("Thread creation failed");
+            if(pthread_create(&detect_thread, 0, detect_in_thread, 0)) error("Thread creation failed");
 
             if(!prefix){
                 show_image(disp, "Demo");
@@ -201,7 +203,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
             fetch_in_thread(0);
             det   = in;
             det_s = in_s;
-            detect_in_thread(screen_class);
+            detect_in_thread(0);
             if(delay == 0) {
                 free_image(disp);
                 disp = det;
