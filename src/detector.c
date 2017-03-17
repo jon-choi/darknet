@@ -459,8 +459,17 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
     int j;
     float nms=.4;
     while(1){
+	FILE *output_file;
         if(filename){
             strncpy(input, filename, 256);
+
+	    const char period[2] = ".";
+	    /* char *input_fn_no_ext; */
+	    char output_fn[256];
+	    strncpy(output_fn, filename, 256);
+	    strtok(output_fn, period);
+	    strcat(output_fn,".txt");
+	    output_file = fopen(output_fn,"w");
         } else {
             printf("Enter Image Path: ");
             fflush(stdout);
@@ -483,7 +492,11 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         get_region_boxes(l, 1, 1, thresh, probs, boxes, 0, 0, hier_thresh);
         if (l.softmax_tree && nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         else if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
-        draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes);
+	if(filename){
+		draw_and_write_detections(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes, output_file);
+	} else {
+		draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes);
+	}
         // TODO: Remove hard-coded "person" search_name param.
 	/*  count = count_detections(im, l.w*l.h*l.n, thresh, probs, names, l.classes, "person"); */
 
@@ -520,6 +533,7 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         // Save image
         printf("Saving image: %s\n", new_name);
         save_image(im, new_name);
+	fclose(output_file);
         // counter++;
 
         // Skip showing the image.
