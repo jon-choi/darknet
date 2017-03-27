@@ -274,12 +274,13 @@ void draw_and_write_detections_screened(image im, int num, float thresh, box *bo
             if(top < 0) top = 0;
             if(bot > im.h-1) bot = im.h-1;
 
-            draw_box_width(im, left, top, right, bot, width, red, green, blue);
-	    /* Add appropriate class labels to drawn boxes */
-            if (alphabet) {
-                image label = get_label(alphabet, names[class], (im.h*.03)/10);
-                draw_label(im, top + width, left, label, rgb);
-	    }
+	    // TODO: Add toggle for drawing boxes
+            /* draw_box_width(im, left, top, right, bot, width, red, green, blue); */
+	    /* #<{(| Add appropriate class labels to drawn boxes |)}># */
+            /* if (alphabet) { */
+            /*     image label = get_label(alphabet, names[class], (im.h*.03)/10); */
+            /*     draw_label(im, top + width, left, label, rgb); */
+	    /* } */
         }
     }
 }
